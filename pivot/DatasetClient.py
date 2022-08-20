@@ -54,7 +54,6 @@ class DatasetClient:
         res = requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/write", data=json.dumps({
             "objects": objects
         }), headers=self.headers).json()
-        print(res)
         if simple:
             return res["data"]
         return res
