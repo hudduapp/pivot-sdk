@@ -1,6 +1,7 @@
 import requests
 
 from pivot.DatasetClient import DatasetClient
+from pivot.Exceptions import DatasetException
 
 
 class PivotClient:
@@ -33,5 +34,15 @@ class PivotClient:
             "skip": skip
         }, headers=self.headers).json()
 
-    def get(self, dataset_id: str) -> DatasetClient:
-        return DatasetClient(self.base_url, self.access_token, dataset_id=dataset_id)
+    def get(self, dataset_id: str = None, dataset_name: str = None) -> DatasetClient:
+
+        if dataset_id:
+            return DatasetClient(self.base_url, self.access_token, dataset_id=dataset_id)
+        elif dataset_name:
+            try:
+                dataset_id = self.list_datasets(f"name:{dataset_name}")["data"][0]["id"]
+            except:
+                raise DatasetException("no dataset with dataset_name found")
+            return DatasetClient(self.base_url, self.access_token, dataset_id=dataset_id)
+        else:
+            raise DatasetException("one of dataset_id or dataset_name have to be specified.")
