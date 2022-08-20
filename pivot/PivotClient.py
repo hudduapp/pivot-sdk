@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from pivot.DatasetClient import DatasetClient
@@ -14,10 +16,10 @@ class PivotClient:
         }
 
     def create_dataset(self, name: str, database: str) -> dict:
-        return requests.request("POST", f"{self.base_url}/datasets", data={
+        return requests.request("POST", f"{self.base_url}/datasets", data=json.dumps({
             "name": name,
             "database": database
-        }, headers=self.headers).json()
+        }), headers=self.headers).json()
 
     def delete_dataset(self, dataset_id: str) -> dict:
         return requests.request("DELETE", f"{self.base_url}/datasets/{dataset_id}", headers=self.headers).json()
@@ -25,14 +27,18 @@ class PivotClient:
     def retrieve_dataset(self, dataset_id: str) -> dict:
         return requests.request("GET", f"{self.base_url}/datasets/{dataset_id}", headers=self.headers).json()
 
-    def list_datasets(self, query: str = "", sort: str = "", limit: int = 25,
+    def list_datasets(self, query=None, sort=None, limit: int = 25,
                       skip: int = 0) -> dict:
-        return requests.request("GET", f"{self.base_url}/datasets", params={
+        if query is None:
+            query = {}
+        if sort is None:
+            sort = {}
+        return requests.request("POST", f"{self.base_url}/datasets/query", data=json.dumps({
             "query": query,
             "sort": sort,
             "limit": limit,
             "skip": skip
-        }, headers=self.headers).json()
+        }), headers=self.headers).json()
 
     def get(self, dataset_id: str = None, dataset_name: str = None) -> DatasetClient:
 
