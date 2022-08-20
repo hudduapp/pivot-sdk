@@ -46,7 +46,7 @@ class PivotClient:
             return DatasetClient(self.base_url, self.access_token, dataset_id=dataset_id)
         elif dataset_name:
             try:
-                dataset_id = self.list_datasets(f"name:{dataset_name}")["data"][0]["id"]
+                dataset_id = self.list_datasets({"name": dataset_name})["data"][0]["id"]
             except:
                 raise DatasetException("no dataset with dataset_name found")
             return DatasetClient(self.base_url, self.access_token, dataset_id=dataset_id)
