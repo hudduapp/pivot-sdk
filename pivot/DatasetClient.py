@@ -41,9 +41,7 @@ class DatasetClient:
             "objects": objects
         }), headers=self.headers).json()
 
-    def update(self, update: dict, query=None) -> dict:
-        if query is None:
-            query = {}
+    def update(self, query: dict, update: dict) -> dict:
         return requests.request("PUT", f"{self.base_url}/datasets/{self.dataset_id}/update", data=json.dumps({
             "query": query,
             "update": update
