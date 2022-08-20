@@ -23,29 +23,51 @@ class DatasetClient:
             raise DatasetException("The dataset you tried to access does not exist\nPlease first create this dataset.")
 
     def query(self, query=None, sort=None, limit: int = 25,
-              skip: int = 0) -> dict:
+              skip: int = 0, simple: bool = True) -> dict:
         if sort is None:
             sort = {}
         if query is None:
             query = {}
 
-        return requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/query", data=json.dumps({
+        res = requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/query", data=json.dumps({
             "query": query,
             "sort": sort,
             "limit": limit,
             "skip": skip
         }), headers=self.headers).json()
 
-    def write(self, objects: list) -> dict:
-        return requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/write", data=json.dumps({
+        if simple:
+            return res["data"]
+        return res
+
+    def get(self, query=None) -> dict:
+
+        if query is None:
+            query = {}
+
+        try:
+            return self.query(query)[0]
+        except:
+            raise DatasetException("Instance does not exist")
+
+    def write(self, objects: list, simple: bool = True) -> dict:
+        res = requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/write", data=json.dumps({
             "objects": objects
         }), headers=self.headers).json()
+        print(res)
+        if simple:
+            return res["data"]
+        return res
 
-    def update(self, query: dict, update: dict) -> dict:
-        return requests.request("PUT", f"{self.base_url}/datasets/{self.dataset_id}/update", data=json.dumps({
+    def update(self, query: dict, update: dict, simple: bool = True) -> dict:
+        res = requests.request("PUT", f"{self.base_url}/datasets/{self.dataset_id}/update", data=json.dumps({
             "query": query,
             "update": update
         }), headers=self.headers).json()
+
+        if simple:
+            return res["data"]
+        return res
 
     def delete(self, query=None) -> dict:
         if query is None:
