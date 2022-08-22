@@ -6,7 +6,8 @@ setup(
     packages=["pivot"],
     url='',
     requires=[
-        "json"
+        "json",
+        "requests"
     ],
     license='MIT',
     author='Joshua3212',
