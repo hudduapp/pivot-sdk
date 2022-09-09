@@ -11,30 +11,41 @@ class DatasetClient:
         self.access_token = access_token
         self.headers = {
             "Authorization": f"Token {self.access_token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         self.dataset_id = dataset_id
 
         # validate that dataset exists
 
-        if requests.request("GET", f"{self.base_url}/datasets/{self.dataset_id}",
-                            headers=self.headers).status_code == 404:
-            raise DatasetException("The dataset you tried to access does not exist\nPlease first create this dataset.")
+        if (
+            requests.request(
+                "GET",
+                f"{self.base_url}/datasets/{self.dataset_id}",
+                headers=self.headers,
+            ).status_code
+            == 404
+        ):
+            raise DatasetException(
+                "The dataset you tried to access does not exist\nPlease first create this dataset."
+            )
 
-    def query(self, query=None, sort=None, limit: int = 25,
-              skip: int = 0, simple: bool = True) -> dict:
+    def query(
+        self, query=None, sort=None, limit: int = 25, skip: int = 0, simple: bool = True
+    ) -> dict:
         if sort is None:
             sort = {}
         if query is None:
             query = {}
 
-        res = requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/query", data=json.dumps({
-            "query": query,
-            "sort": sort,
-            "limit": limit,
-            "skip": skip
-        }), headers=self.headers).json()
+        res = requests.request(
+            "POST",
+            f"{self.base_url}/datasets/{self.dataset_id}/query",
+            data=json.dumps(
+                {"query": query, "sort": sort, "limit": limit, "skip": skip}
+            ),
+            headers=self.headers,
+        ).json()
 
         if simple:
             return res["data"]
@@ -51,18 +62,23 @@ class DatasetClient:
             raise DatasetException("Instance does not exist")
 
     def write(self, objects: list, simple: bool = True) -> dict:
-        res = requests.request("POST", f"{self.base_url}/datasets/{self.dataset_id}/write", data=json.dumps({
-            "objects": objects
-        }), headers=self.headers).json()
+        res = requests.request(
+            "POST",
+            f"{self.base_url}/datasets/{self.dataset_id}/write",
+            data=json.dumps({"objects": objects}),
+            headers=self.headers,
+        ).json()
         if simple:
             return res["data"]
         return res
 
     def update(self, query: dict, update: dict, simple: bool = True) -> dict:
-        res = requests.request("PUT", f"{self.base_url}/datasets/{self.dataset_id}/update", data=json.dumps({
-            "query": query,
-            "update": update
-        }), headers=self.headers).json()
+        res = requests.request(
+            "PUT",
+            f"{self.base_url}/datasets/{self.dataset_id}/update",
+            data=json.dumps({"query": query, "update": update}),
+            headers=self.headers,
+        ).json()
 
         if simple:
             return res["data"]
@@ -71,7 +87,13 @@ class DatasetClient:
     def delete(self, query=None) -> dict:
         if query is None:
             query = {}
-        return requests.request("DELETE", f"{self.base_url}/datasets/{self.dataset_id}/delete", data=json.dumps({
-            "query": query,
-
-        }), headers=self.headers).json()
+        return requests.request(
+            "DELETE",
+            f"{self.base_url}/datasets/{self.dataset_id}/delete",
+            data=json.dumps(
+                {
+                    "query": query,
+                }
+            ),
+            headers=self.headers,
+        ).json()

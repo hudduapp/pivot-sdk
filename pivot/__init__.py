@@ -1,7 +1,4 @@
-__all__ = [
-    "PivotClient",
-    "DatasetClient"
-]
+__all__ = ["PivotClient", "DatasetClient"]
 
 from pivot.DatasetClient import DatasetClient
 from pivot.PivotClient import PivotClient
