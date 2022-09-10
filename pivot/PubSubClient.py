@@ -29,10 +29,10 @@ class PubSubClient:
                 "The dataset you tried to access does not exist\nPlease first create this dataset."
             )
 
-    def push(self, objects: list) -> dict:
+    def append(self, objects: list, simple: bool = True) -> dict:
         res = requests.request(
             "POST",
-            f"{self.base_url}/datasets/{self.topic_id}/push",
+            f"{self.base_url}/topics/{self.topic_id}/append",
             data=json.dumps({"objects": objects}),
             headers=self.headers,
         ).json()
@@ -41,7 +41,7 @@ class PubSubClient:
             return res["data"]
         return res
 
-    def pull(self, limit: int = 25, reserve: bool = False) -> dict:
+    def pull(self, limit: int = 25, reserve: bool = False, simple: bool = True) -> dict:
         res = requests.request(
             "POST",
             f"{self.base_url}/topics/{self.topic_id}/pull",
@@ -54,7 +54,7 @@ class PubSubClient:
             return res["data"]
         return res
 
-    def acknowledge(self, ids: List[str]) -> dict:
+    def acknowledge(self, ids: List[str], simple: bool = True) -> dict:
         res = requests.request(
             "POST",
             f"{self.base_url}/topics/{self.topic_id}/acknowledge",

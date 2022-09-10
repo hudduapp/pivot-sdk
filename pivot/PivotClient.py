@@ -84,7 +84,6 @@ class PivotClient:
         ).json()
 
     def get_pubsub_topic(self, topic_id: str) -> PubSubClient:
-
         return PubSubClient(
             self.base_url, self.access_token, topic_id=topic_id
         )
