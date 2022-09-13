@@ -19,19 +19,19 @@ class DatasetClient:
         # validate that dataset exists
 
         if (
-            requests.request(
-                "GET",
-                f"{self.base_url}/datasets/{self.dataset_id}",
-                headers=self.headers,
-            ).status_code
-            == 404
+                requests.request(
+                    "GET",
+                    f"{self.base_url}/datasets/{self.dataset_id}",
+                    headers=self.headers,
+                ).status_code
+                == 404
         ):
             raise DatasetException(
                 "The dataset you tried to access does not exist\nPlease first create this dataset."
             )
 
     def query(
-        self, query=None, sort=None, limit: int = 25, skip: int = 0, simple: bool = True
+            self, query=None, sort=None, limit: int = 25, skip: int = 0, simple: bool = True
     ) -> dict:
         if sort is None:
             sort = {}
@@ -66,6 +66,17 @@ class DatasetClient:
             "POST",
             f"{self.base_url}/datasets/{self.dataset_id}/write",
             data=json.dumps({"objects": objects}),
+            headers=self.headers,
+        ).json()
+        if simple:
+            return res["data"]
+        return res
+
+    def aggregate(self, pipeline: list, simple: bool = True) -> dict:
+        res = requests.request(
+            "POST",
+            f"{self.base_url}/datasets/{self.dataset_id}/aggregate",
+            data=json.dumps({"pipeline": pipeline}),
             headers=self.headers,
         ).json()
         if simple:
