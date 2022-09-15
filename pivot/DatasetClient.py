@@ -6,7 +6,7 @@ from pivot.Exceptions import DatasetException
 
 
 class DatasetClient:
-    def __init__(self, base_url: str, access_token: str, dataset_id: str):
+    def __init__(self, base_url: str, access_token: str, dataset_id: str, check_conn:bool = False):
         self.base_url = base_url
         self.access_token = access_token
         self.headers = {
@@ -18,17 +18,18 @@ class DatasetClient:
 
         # validate that dataset exists
 
-        if (
-                requests.request(
-                    "GET",
-                    f"{self.base_url}/datasets/{self.dataset_id}",
-                    headers=self.headers,
-                ).status_code
-                == 404
-        ):
-            raise DatasetException(
-                "The dataset you tried to access does not exist\nPlease first create this dataset."
-            )
+        if check_conn:
+            if (
+                    requests.request(
+                        "GET",
+                        f"{self.base_url}/datasets/{self.dataset_id}",
+                        headers=self.headers,
+                    ).status_code
+                    == 404
+            ):
+                raise DatasetException(
+                    "The dataset you tried to access does not exist\nPlease first create this dataset."
+                )
 
     def query(
             self, query=None, sort=None, limit: int = 25, skip: int = 0, simple: bool = True
